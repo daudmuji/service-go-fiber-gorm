@@ -23,7 +23,7 @@ func (p *ProductUsecase) CreateProduct(ctx *fiber.Ctx, request *request.ProductC
 
 	marshal, err := json.Marshal(request.AdditionalInfo)
 	if err != nil {
-		e := fmt.Sprintf("Error Marshal Json : %s, nomor seri product: %d | Error: %s", request.AdditionalInfo, request.NomorSeriBarang, err.Error())
+		e := fmt.Sprintf("Error Marshal Json On Create : %s, nomor seri product: %d | Error: %s", request.AdditionalInfo, request.NomorSeriBarang, err.Error())
 		log.Println(e)
 		return err, res
 	}
@@ -106,11 +106,18 @@ func (p *ProductUsecase) GetDetailProductByNomorSeri(ctx *fiber.Ctx, nomorSeri i
 
 func (p *ProductUsecase) UpdateProductByNomorSeri(ctx *fiber.Ctx, nomorSeri int, request *request.ProductUpdateRequest) (err error, res response.SuccessResponse) {
 
+	marshal, err := json.Marshal(request.AdditionalInfo)
+	if err != nil {
+		e := fmt.Sprintf("Error Marshal Json On Update : %s, nomor seri product: %d | Error: %s", request.AdditionalInfo, request.NomorSeriBarang, err.Error())
+		log.Println(e)
+		return err, res
+	}
+
 	product := model.Product{
 		NamaBarang:       request.NamaBarang,
 		JumlahStokBarang: request.JumlahStokBarang,
 		NomorSeriBarang:  request.NomorSeriBarang,
-		AdditionalInfo:   request.AdditionalInfo.(string),
+		AdditionalInfo:   string(marshal),
 		GambarBarang:     request.GambarBarang,
 		UpdatedAt:        time.Now(),
 	}
