@@ -75,10 +75,37 @@ func (p *ProductUsecase) GetListProduct(ctx *fiber.Ctx) (err error, res response
 		return err, res
 	}
 
+	productResponse := make([]response.ProductResponse, len(products))
+
+	for i, product := range products {
+
+		var additionalInfoMap map[string]string
+
+		if product.AdditionalInfo.String != "" {
+			err = json.Unmarshal([]byte(product.AdditionalInfo.String), &additionalInfoMap)
+			if err != nil {
+				e := fmt.Sprintf("Error Unarshal Json On Get List | Error: %s", err.Error())
+				log.Println(e)
+				return err, res
+			}
+		}
+
+		productResponse[i] = response.ProductResponse{
+			ID:               product.ID.String,
+			NamaBarang:       product.NamaBarang.String,
+			JumlahStokBarang: product.JumlahStokBarang.String,
+			NomorSeriBarang:  product.NomorSeriBarang.Int64,
+			AdditionalInfo:   additionalInfoMap,
+			GambarBarang:     product.GambarBarang.String,
+			CreatedAt:        product.CreatedAt.String,
+			UpdatedAt:        product.UpdatedAt.String,
+		}
+	}
+
 	return nil, response.SuccessResponse{
 		Message:   "Success Get List Product",
 		TimeStamp: time.Now(),
-		Data:      products,
+		Data:      productResponse,
 	}
 }
 
@@ -97,10 +124,30 @@ func (p *ProductUsecase) GetDetailProductByNomorSeri(ctx *fiber.Ctx, nomorSeri i
 		return err, res
 	}
 
+	var additionalInfoMap map[string]string
+
+	err = json.Unmarshal([]byte(product.AdditionalInfo.String), &additionalInfoMap)
+	if err != nil {
+		e := fmt.Sprintf("Error Unarshal Json On Get List | Error: %s", err.Error())
+		log.Println(e)
+		return err, res
+	}
+
+	productResponse := response.ProductResponse{
+		ID:               product.ID.String,
+		NamaBarang:       product.NamaBarang.String,
+		JumlahStokBarang: product.JumlahStokBarang.String,
+		NomorSeriBarang:  product.NomorSeriBarang.Int64,
+		AdditionalInfo:   additionalInfoMap,
+		GambarBarang:     product.GambarBarang.String,
+		CreatedAt:        product.CreatedAt.String,
+		UpdatedAt:        product.UpdatedAt.String,
+	}
+
 	return nil, response.SuccessResponse{
 		Message:   "Success Get List Product",
 		TimeStamp: time.Now(),
-		Data:      product,
+		Data:      productResponse,
 	}
 }
 
