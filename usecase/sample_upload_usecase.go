@@ -31,6 +31,7 @@ func NewSampleUploadUsecase(SampleUploadRepo model.TemporaryUploadRepository, Va
 func (u *SampleUploadUsecase) UploadBulkExcel(ctx *fiber.Ctx, req *request.UploadRequest) (err error, res response.WebResponse) {
 
 	res = response.WebResponse{
+		Status:    false,
 		Message:   "",
 		TimeStamp: time.Now(),
 		Data:      nil,
@@ -103,8 +104,13 @@ func (u *SampleUploadUsecase) UploadBulkExcel(ctx *fiber.Ctx, req *request.Uploa
 		}(mappingData)
 	}
 
+	data := map[string]string{
+		"total_data": fmt.Sprintf("Total Data %d", len(rawdata)-1),
+	}
+
+	res.Status = true
 	res.Message = "Success Uplad Data"
-	res.Data = fmt.Sprintf("Total Data %d", (len(rawdata) - 1))
+	res.Data = data
 	return nil, res
 }
 

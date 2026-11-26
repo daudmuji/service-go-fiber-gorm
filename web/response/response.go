@@ -30,6 +30,7 @@ type ErrorResponse struct {
 }
 
 type WebResponse struct {
+	Status    bool        `json:"status"`
 	Message   string      `json:"message"`
 	TimeStamp time.Time   `json:"timestamp"`
 	Data      interface{} `json:"data"`
